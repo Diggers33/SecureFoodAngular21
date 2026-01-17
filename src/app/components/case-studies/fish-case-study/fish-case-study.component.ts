@@ -48,7 +48,7 @@ export class FishCaseStudyComponent {
   hoveredNode: NodeType | null = null;
   selectedNode: NodeType | null = null;
   selectedPath: 'export' | 'domestic' | null = null;
-  zoom = 0.75;
+  zoom = 1.0;
 
   nodes: NodeData[] = [
     {
@@ -296,7 +296,7 @@ export class FishCaseStudyComponent {
   }
 
   resetZoom(): void {
-    this.zoom = 0.75;
+    this.zoom = 1.0;
   }
 
   getConnectionPath(conn: Connection): string {

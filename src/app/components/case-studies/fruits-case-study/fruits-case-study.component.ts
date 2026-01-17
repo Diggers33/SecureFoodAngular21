@@ -46,7 +46,7 @@ export class FruitsCaseStudyComponent {
 
   hoveredNode: NodeType | null = null;
   selectedNode: NodeType | null = null;
-  zoom = 0.85;
+  zoom = 1.0;
 
   nodes: NodeData[] = [
     {
@@ -231,7 +231,7 @@ export class FruitsCaseStudyComponent {
   }
 
   resetZoom(): void {
-    this.zoom = 0.85;
+    this.zoom = 1.0;
   }
 
   getConnectionPath(conn: Connection): string {
