@@ -6,36 +6,38 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
 import * as echarts from 'echarts';
-import { NavigationService } from '../../../services/navigation.service';
-import { Sector, sectorDisplayNames } from '../../../models/routing.model';
 import { EChartsOption } from 'echarts';
 
-interface SavedSimulation {
-  id: string;
-  name: string;
-  sector: Sector;
-  variable: string;
-  month: string;
-  year: string;
-  timestamp: Date;
-  parameters: {
-    demandShift: number;
-    supplyChange: number;
-    priceFluctuation: number;
-  };
-  results: {
-    demand: number[];
-    supply: number[];
-    inventory: number[];
-  };
-}
-
-interface KpiCard {
-  title: string;
-  value: string;
-  icon: string;
-  colorClass: string;
-}
+import { NavigationService } from '../../../services/navigation.service';
+import { Sector, sectorDisplayNames } from '../../../models/routing.model';
+import { SavedSimulation, KpiCard } from './simulations.models';
+import {
+  SIMULATION_VARIABLES,
+  MONTHS,
+  YEARS,
+  VISUALIZATION_TYPES,
+  QUICK_ACCESS_TYPES,
+  KPI_CARDS,
+  FORECAST_DATA,
+  SIMULATION_DATA,
+  SENSITIVITY_DATA,
+  FEATURE_IMPORTANCE_DATA,
+  CONFUSION_MATRIX,
+  generateHeatmapData,
+  generateScatterData,
+  generateLogisticCurveData
+} from './simulations.data';
+import {
+  getTimeSeriesChart,
+  getBarChart,
+  getLogisticCurveChart,
+  getScatterChart,
+  getSensitivityChart,
+  getFeatureImportanceChart,
+  getComparisonChart,
+  getHeatmapColor,
+  getConfusionMatrixColor
+} from './simulations.chart-config';
 
 @Component({
   selector: 'app-simulations',
@@ -60,30 +62,22 @@ export class SimulationsComponent implements OnInit {
   selectedVisualization = 'Time Series';
   datasetType = 'platform';
 
-  // Options
-  variables = [
-    'Capture volume',
-    'Imports',
-    'Exports',
-    'Quantity available for consumption',
-    'Quantity consumed (kg or tons)',
-    'Market price'
-  ];
+  // Options from data file
+  variables = SIMULATION_VARIABLES;
+  months = MONTHS;
+  years = YEARS;
+  visualizationTypes = VISUALIZATION_TYPES;
+  quickAccessTypes = QUICK_ACCESS_TYPES;
 
-  months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  years = ['2024', '2023', '2022', '2021', '2020'];
+  // KPI Cards
+  kpiCards: KpiCard[] = KPI_CARDS;
 
-  visualizationTypes = [
-    'Time Series',
-    'Bar Chart',
-    'Logistic Curve',
-    'Confusion Matrix',
-    'Scatter Plot',
-    'Heatmap',
-    'Sensitivity Line Plot'
-  ];
-
-  quickAccessTypes = ['Time Series', 'Bar Chart', 'Logistic Curve', 'Confusion Matrix'];
+  // Sample data from data file
+  forecastData = FORECAST_DATA;
+  simulationData = SIMULATION_DATA;
+  sensitivityData = SENSITIVITY_DATA;
+  featureImportanceData = FEATURE_IMPORTANCE_DATA;
+  confusionMatrix = CONFUSION_MATRIX;
 
   // Saved simulations
   savedSimulations: SavedSimulation[] = [];
@@ -94,66 +88,6 @@ export class SimulationsComponent implements OnInit {
   showSaveDialog = false;
   simulationName = '';
 
-  // KPI Cards
-  kpiCards: KpiCard[] = [
-    { title: 'Forecast Accuracy', value: '94.2%', icon: 'trending-up', colorClass: 'kpi-primary' },
-    { title: 'Risk Score', value: 'Medium', icon: 'activity', colorClass: 'kpi-orange' },
-    { title: 'Demand Variance', value: '±12%', icon: 'bar-chart-3', colorClass: 'kpi-blue' },
-    { title: 'Model Type', value: 'LSTM', icon: 'sparkles', colorClass: 'kpi-purple' }
-  ];
-
-  // Sample data
-  forecastData = [
-    { time: 0, actual: 5.0, predicted: 5.0 },
-    { time: 5, actual: 5.3, predicted: 5.2 },
-    { time: 10, actual: 5.8, predicted: 5.7 },
-    { time: 15, actual: 6.1, predicted: 6.0 },
-    { time: 20, actual: 6.3, predicted: 6.2 },
-    { time: 25, actual: 6.4, predicted: 6.3 },
-    { time: 30, actual: 5.8, predicted: 5.9 },
-    { time: 35, actual: 5.0, predicted: 5.2 },
-    { time: 40, actual: 4.2, predicted: 4.5 },
-    { time: 45, actual: 4.0, predicted: 4.2 },
-    { time: 50, actual: 4.5, predicted: 4.6 },
-    { time: 55, actual: 4.8, predicted: 4.9 },
-    { time: 60, actual: 4.6, predicted: 4.7 }
-  ];
-
-  simulationData = [
-    { time: 'Jan', demand: 60, supply: 55, inventory: 45 },
-    { time: 'Feb', demand: 65, supply: 58, inventory: 43 },
-    { time: 'Mar', demand: 68, supply: 62, inventory: 41 },
-    { time: 'Apr', demand: 72, supply: 65, inventory: 39 },
-    { time: 'May', demand: 75, supply: 68, inventory: 37 },
-    { time: 'Jun', demand: 78, supply: 72, inventory: 35 },
-    { time: 'Jul', demand: 82, supply: 75, inventory: 33 },
-    { time: 'Aug', demand: 85, supply: 78, inventory: 31 },
-    { time: 'Sep', demand: 88, supply: 82, inventory: 29 },
-    { time: 'Oct', demand: 90, supply: 85, inventory: 28 },
-    { time: 'Nov', demand: 92, supply: 88, inventory: 27 },
-    { time: 'Dec', demand: 95, supply: 90, inventory: 26 }
-  ];
-
-  sensitivityData = [
-    { parameter: -20, demand: 52, supply: 48 },
-    { parameter: -15, demand: 56, supply: 51 },
-    { parameter: -10, demand: 60, supply: 55 },
-    { parameter: -5, demand: 64, supply: 59 },
-    { parameter: 0, demand: 68, supply: 62 },
-    { parameter: 5, demand: 72, supply: 66 },
-    { parameter: 10, demand: 76, supply: 70 },
-    { parameter: 15, demand: 80, supply: 74 },
-    { parameter: 20, demand: 84, supply: 78 }
-  ];
-
-  featureImportanceData = [
-    { name: 'ΔSea Temp', value: 0.24 },
-    { name: 'ΔChlorophyll', value: 0.21 },
-    { name: 'ΔLandings', value: 0.18 },
-    { name: 'ΔInventory', value: 0.15 },
-    { name: 'ΔImports', value: 0.12 }
-  ];
-
   // Chart options
   mainChart: EChartsOption = {};
   featureImportanceChart: EChartsOption = {};
@@ -163,19 +97,9 @@ export class SimulationsComponent implements OnInit {
     inventory: {}
   };
 
-  // Heatmap data
+  // Dynamic data
   heatmapData: { x: number; y: number; value: number }[] = [];
-  confusionMatrix = [
-    { x: 0, y: 0, value: 144, label: 'TN: 144' },
-    { x: 1, y: 0, value: 23, label: 'FP: 23' },
-    { x: 0, y: 1, value: 7, label: 'FN: 7' },
-    { x: 1, y: 1, value: 46, label: 'TP: 46' }
-  ];
-
-  // Scatter data
   scatterData: { volume: number; quality: number }[] = [];
-
-  // Logistic curve data
   logisticCurveData: { x: number; y: number }[] = [];
 
   ngOnInit(): void {
@@ -186,24 +110,9 @@ export class SimulationsComponent implements OnInit {
   }
 
   generateSampleData(): void {
-    // Generate heatmap data
-    this.heatmapData = Array.from({ length: 25 }, (_, i) => ({
-      x: i % 5,
-      y: Math.floor(i / 5),
-      value: Math.random()
-    }));
-
-    // Generate scatter data
-    this.scatterData = Array.from({ length: 120 }, () => ({
-      volume: Math.random() * 100,
-      quality: Math.random() * 100
-    }));
-
-    // Generate logistic curve data
-    this.logisticCurveData = Array.from({ length: 50 }, (_, i) => {
-      const x = -2.0 + (i * 4.0) / 50;
-      return { x, y: 1 / (1 + Math.exp(-3 * x)) };
-    });
+    this.heatmapData = generateHeatmapData();
+    this.scatterData = generateScatterData();
+    this.logisticCurveData = generateLogisticCurveData();
   }
 
   updateCharts(): void {
@@ -215,283 +124,38 @@ export class SimulationsComponent implements OnInit {
   updateMainChart(): void {
     switch (this.selectedVisualization) {
       case 'Time Series':
-        this.mainChart = this.getTimeSeriesChart();
+        this.mainChart = getTimeSeriesChart(this.forecastData);
         break;
       case 'Bar Chart':
-        this.mainChart = this.getBarChart();
+        this.mainChart = getBarChart(this.simulationData);
         break;
       case 'Logistic Curve':
-        this.mainChart = this.getLogisticCurveChart();
+        this.mainChart = getLogisticCurveChart(this.logisticCurveData);
         break;
       case 'Scatter Plot':
-        this.mainChart = this.getScatterChart();
+        this.mainChart = getScatterChart(this.scatterData);
         break;
       case 'Sensitivity Line Plot':
-        this.mainChart = this.getSensitivityChart();
+        this.mainChart = getSensitivityChart(this.sensitivityData);
         break;
       default:
-        this.mainChart = this.getTimeSeriesChart();
+        this.mainChart = getTimeSeriesChart(this.forecastData);
     }
   }
 
-  getTimeSeriesChart(): EChartsOption {
-    return {
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['Actual', 'ML Forecast'], bottom: 0 },
-      grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
-      xAxis: {
-        type: 'category',
-        name: 'Time (weeks)',
-        nameLocation: 'middle',
-        nameGap: 30,
-        data: this.forecastData.map(d => d.time.toString()),
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'Volume (1000 tons)',
-        nameLocation: 'middle',
-        nameGap: 40,
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      series: [
-        {
-          name: 'Actual',
-          type: 'line',
-          smooth: true,
-          data: this.forecastData.map(d => d.actual),
-          lineStyle: { width: 3, color: '#0d9488' },
-          itemStyle: { color: '#0d9488' },
-          areaStyle: { color: 'rgba(13, 148, 136, 0.1)' }
-        },
-        {
-          name: 'ML Forecast',
-          type: 'line',
-          smooth: true,
-          data: this.forecastData.map(d => d.predicted),
-          lineStyle: { width: 3, color: '#f59e0b', type: 'dashed' },
-          itemStyle: { color: '#f59e0b' },
-          areaStyle: { color: 'rgba(245, 158, 11, 0.1)' }
-        }
-      ]
-    };
-  }
-
-  getBarChart(): EChartsOption {
-    return {
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['Demand', 'Supply', 'Inventory'], bottom: 0 },
-      grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
-      xAxis: {
-        type: 'category',
-        data: this.simulationData.map(d => d.time),
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      yAxis: {
-        type: 'value',
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      series: [
-        {
-          name: 'Demand',
-          type: 'bar',
-          data: this.simulationData.map(d => d.demand),
-          itemStyle: { color: '#0d9488', borderRadius: [8, 8, 0, 0] }
-        },
-        {
-          name: 'Supply',
-          type: 'bar',
-          data: this.simulationData.map(d => d.supply),
-          itemStyle: { color: '#f59e0b', borderRadius: [8, 8, 0, 0] }
-        },
-        {
-          name: 'Inventory',
-          type: 'bar',
-          data: this.simulationData.map(d => d.inventory),
-          itemStyle: { color: '#3b82f6', borderRadius: [8, 8, 0, 0] }
-        }
-      ]
-    };
-  }
-
-  getLogisticCurveChart(): EChartsOption {
-    return {
-      tooltip: { trigger: 'axis' },
-      grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
-      xAxis: {
-        type: 'value',
-        name: 'Supply Shock Magnitude',
-        nameLocation: 'middle',
-        nameGap: 30,
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'Price Impact (normalized)',
-        nameLocation: 'middle',
-        nameGap: 40,
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      series: [
-        {
-          name: 'Price Response',
-          type: 'line',
-          smooth: true,
-          data: this.logisticCurveData.map(d => [d.x, d.y]),
-          lineStyle: { width: 4, color: '#8b5cf6' },
-          itemStyle: { color: '#8b5cf6' },
-          showSymbol: false
-        }
-      ]
-    };
-  }
-
-  getScatterChart(): EChartsOption {
-    return {
-      tooltip: { trigger: 'item' },
-      grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
-      xAxis: {
-        type: 'value',
-        name: 'Volume (units)',
-        nameLocation: 'middle',
-        nameGap: 30,
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'Quality Score',
-        nameLocation: 'middle',
-        nameGap: 40,
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      series: [
-        {
-          name: 'Data Points',
-          type: 'scatter',
-          data: this.scatterData.map(d => [d.volume, d.quality]),
-          itemStyle: { color: 'rgba(13, 148, 136, 0.6)' },
-          symbolSize: 8
-        }
-      ]
-    };
-  }
-
-  getSensitivityChart(): EChartsOption {
-    return {
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['Demand Sensitivity', 'Supply Sensitivity'], bottom: 0 },
-      grid: { left: '3%', right: '4%', bottom: '15%', top: '10%', containLabel: true },
-      xAxis: {
-        type: 'category',
-        name: 'Parameter Change (%)',
-        nameLocation: 'middle',
-        nameGap: 30,
-        data: this.sensitivityData.map(d => d.parameter.toString()),
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'Output Value',
-        nameLocation: 'middle',
-        nameGap: 40,
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      series: [
-        {
-          name: 'Demand Sensitivity',
-          type: 'line',
-          smooth: true,
-          data: this.sensitivityData.map(d => d.demand),
-          lineStyle: { width: 3, color: '#0d9488' },
-          itemStyle: { color: '#0d9488' }
-        },
-        {
-          name: 'Supply Sensitivity',
-          type: 'line',
-          smooth: true,
-          data: this.sensitivityData.map(d => d.supply),
-          lineStyle: { width: 3, color: '#f59e0b' },
-          itemStyle: { color: '#f59e0b' }
-        }
-      ]
-    };
-  }
-
   updateFeatureImportanceChart(): void {
-    this.featureImportanceChart = {
-      tooltip: { trigger: 'axis' },
-      grid: { left: '20%', right: '4%', bottom: '10%', top: '10%', containLabel: true },
-      xAxis: { type: 'value', axisLine: { lineStyle: { color: '#9ca3af' } } },
-      yAxis: {
-        type: 'category',
-        data: this.featureImportanceData.map(d => d.name),
-        axisLine: { lineStyle: { color: '#9ca3af' } }
-      },
-      series: [
-        {
-          name: 'Importance Score',
-          type: 'bar',
-          data: this.featureImportanceData.map(d => d.value),
-          itemStyle: { color: '#8b5cf6', borderRadius: [0, 8, 8, 0] }
-        }
-      ]
-    };
+    this.featureImportanceChart = getFeatureImportanceChart(this.featureImportanceData);
   }
 
   updateComparisonCharts(): void {
     if (this.selectedSimulationIds.length < 2) return;
 
     const selectedSims = this.savedSimulations.filter(s => this.selectedSimulationIds.includes(s.id));
-    const colors = ['#2d6b6a', '#64748b', '#f97316'];
     const times = this.simulationData.map(d => d.time);
 
-    // Demand comparison
-    this.comparisonCharts.demand = {
-      tooltip: { trigger: 'axis' },
-      legend: { data: selectedSims.map(s => s.name), bottom: 0, textStyle: { fontSize: 10 } },
-      grid: { left: '10%', right: '5%', bottom: '20%', top: '10%' },
-      xAxis: { type: 'category', data: times, axisLine: { lineStyle: { color: '#9ca3af' } } },
-      yAxis: { type: 'value', axisLine: { lineStyle: { color: '#9ca3af' } } },
-      series: selectedSims.map((sim, idx) => ({
-        name: sim.name,
-        type: 'line' as const,
-        data: sim.results.demand,
-        lineStyle: { width: 2, color: colors[idx] },
-        itemStyle: { color: colors[idx] }
-      }))
-    };
-
-    // Supply comparison
-    this.comparisonCharts.supply = {
-      tooltip: { trigger: 'axis' },
-      legend: { data: selectedSims.map(s => s.name), bottom: 0, textStyle: { fontSize: 10 } },
-      grid: { left: '10%', right: '5%', bottom: '20%', top: '10%' },
-      xAxis: { type: 'category', data: times, axisLine: { lineStyle: { color: '#9ca3af' } } },
-      yAxis: { type: 'value', axisLine: { lineStyle: { color: '#9ca3af' } } },
-      series: selectedSims.map((sim, idx) => ({
-        name: sim.name,
-        type: 'line' as const,
-        data: sim.results.supply,
-        lineStyle: { width: 2, color: colors[idx] },
-        itemStyle: { color: colors[idx] }
-      }))
-    };
-
-    // Inventory comparison
-    this.comparisonCharts.inventory = {
-      tooltip: { trigger: 'axis' },
-      legend: { data: selectedSims.map(s => s.name), bottom: 0, textStyle: { fontSize: 10 } },
-      grid: { left: '10%', right: '5%', bottom: '20%', top: '10%' },
-      xAxis: { type: 'category', data: times, axisLine: { lineStyle: { color: '#9ca3af' } } },
-      yAxis: { type: 'value', axisLine: { lineStyle: { color: '#9ca3af' } } },
-      series: selectedSims.map((sim, idx) => ({
-        name: sim.name,
-        type: 'line' as const,
-        data: sim.results.inventory,
-        lineStyle: { width: 2, color: colors[idx] },
-        itemStyle: { color: colors[idx] }
-      }))
-    };
+    this.comparisonCharts.demand = getComparisonChart(selectedSims, times, 'demand');
+    this.comparisonCharts.supply = getComparisonChart(selectedSims, times, 'supply');
+    this.comparisonCharts.inventory = getComparisonChart(selectedSims, times, 'inventory');
   }
 
   get sectorIcon(): string {
@@ -513,14 +177,11 @@ export class SimulationsComponent implements OnInit {
   }
 
   getHeatmapColor(value: number): string {
-    if (value > 0.7) return '#ef4444';
-    if (value > 0.4) return '#f59e0b';
-    return '#22c55e';
+    return getHeatmapColor(value);
   }
 
   getConfusionMatrixColor(x: number, y: number): string {
-    if (x === y) return x === 0 ? '#22c55e' : '#0d9488';
-    return '#ef4444';
+    return getConfusionMatrixColor(x, y);
   }
 
   onBackToUseCases(): void {
