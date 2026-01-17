@@ -1,0 +1,44 @@
+{
+  "pageTitle": "Plataforma de Análisis Digital Twin",
+  "selectUseCase": "Seleccione un Caso de Uso",
+  "pageSubtitle": "Elija una cadena de suministro de alimentos para explorar su panel de digital twin",
+  "comingSoon": "Próximamente",
+  "clickToExplore": "Haga clic para explorar",
+  "cases": {
+    "grain": {
+      "title": "Cadena de Suministro de Granos",
+      "location": "Ucrania",
+      "partner": "UAGrain",
+      "description": "Monitorear las exportaciones de trigo y granos de Ucrania a través del corredor del Mar Negro"
+    },
+    "fruits": {
+      "title": "Frutas y Verduras",
+      "location": "Portugal",
+      "partner": "AgroPortugal",
+      "description": "Seguimiento de la producción de frutas y verduras desde la granja hasta el comercio minorista en Portugal"
+    },
+    "fish": {
+      "title": "Pesca y Acuicultura",
+      "location": "Grecia",
+      "partner": "HellasFish",
+      "description": "Monitorear las operaciones de piscicultura y acuicultura en el Mediterráneo"
+    },
+    "aquaculture": {
+      "title": "Acuicultura",
+      "location": "Bélgica",
+      "partner": "BelgiumAqua",
+      "description": "Seguimiento de prácticas sostenibles de acuicultura y sistemas de piscicultura en interior"
+    },
+    "dairy": {
+      "title": "Productos Lácteos",
+      "location": "Países Bajos",
+      "partner": "DutchDairy",
+      "description": "Monitorear la producción láctea desde la granja hasta el procesador en los Países Bajos"
+    }
+  },
+  "features": {
+    "realTime": "Monitoreo en Tiempo Real",
+    "predictive": "Análisis Predictivo",
+    "comprehensive": "Informes Completos"
+  }
+}

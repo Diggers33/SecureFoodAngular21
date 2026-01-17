@@ -1,0 +1,146 @@
+{
+  "appName": "SecureFood Digital Twin",
+  "navigation": {
+    "dashboard": "Dashboard",
+    "monitoring": "Monitoring",
+    "simulations": "Simulations",
+    "reports": "Reports",
+    "home": "Home"
+  },
+  "buttons": {
+    "backToUseCases": "Back to Use Cases",
+    "viewDetails": "View Details",
+    "analyze": "Analyze",
+    "export": "Export",
+    "download": "Download",
+    "save": "Save",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "reset": "Reset",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous",
+    "refresh": "Refresh",
+    "filter": "Filter",
+    "search": "Search",
+    "showMore": "Show More",
+    "showLess": "Show Less"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "critical": "Critical",
+    "warning": "Warning",
+    "normal": "Normal",
+    "good": "Good",
+    "excellent": "Excellent"
+  },
+  "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "last90Days": "Last 90 Days",
+    "customRange": "Custom Range"
+  },
+  "units": {
+    "temperature": "°C",
+    "percentage": "%",
+    "currency": "€",
+    "weight": "kg",
+    "volume": "L"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "noData": "No data available",
+    "error": "An error occurred",
+    "success": "Operation successful",
+    "confirmAction": "Are you sure you want to proceed?",
+    "dataUpdated": "Data updated successfully",
+    "savingChanges": "Saving changes..."
+  },
+  "language": {
+    "select": "Select Language",
+    "english": "English",
+    "spanish": "Español"
+  },
+  "useCases": {
+    "pageTitle": "Digital Twin Analytics Platform",
+    "selectUseCase": "Select a Use Case",
+    "pageSubtitle": "Choose a food supply chain to explore its digital twin dashboard",
+    "comingSoon": "Coming Soon",
+    "clickToExplore": "Click to explore",
+    "cases": {
+      "grain": {
+        "title": "Grain Supply Chain",
+        "location": "Ukraine",
+        "partner": "UAGrain",
+        "description": "Monitor wheat and grain exports from Ukraine through the Black Sea corridor"
+      },
+      "fruits": {
+        "title": "Fruits & Vegetables",
+        "location": "Portugal",
+        "partner": "AgroPortugal",
+        "description": "Track fruit and vegetable production from farm to retail across Portugal"
+      },
+      "fish": {
+        "title": "Fish & Aquaculture",
+        "location": "Greece",
+        "partner": "HellasFish",
+        "description": "Monitor fish farming and aquaculture operations in the Mediterranean"
+      },
+      "aquaculture": {
+        "title": "Aquaculture",
+        "location": "Belgium",
+        "partner": "BelgiumAqua",
+        "description": "Track sustainable aquaculture practices and indoor fish farming systems"
+      },
+      "dairy": {
+        "title": "Dairy Products",
+        "location": "Netherlands",
+        "partner": "DutchDairy",
+        "description": "Monitor dairy production from farm to processor across the Netherlands"
+      }
+    },
+    "features": {
+      "realTime": "Real-time Monitoring",
+      "predictive": "Predictive Analytics",
+      "comprehensive": "Comprehensive Reports"
+    }
+  },
+  "monitoring": {
+    "title": "Sector Monitoring",
+    "selectSector": "Select Sector",
+    "timeRange": "Time Range",
+    "metrics": "Metrics",
+    "alerts": "Alerts",
+    "trends": "Trends"
+  },
+  "simulations": {
+    "title": "Simulations",
+    "newSimulation": "New Simulation",
+    "savedSimulations": "Saved Simulations",
+    "parameters": "Parameters",
+    "results": "Results",
+    "compare": "Compare"
+  },
+  "reports": {
+    "title": "Reports",
+    "availableReports": "Available Reports",
+    "generateReport": "Generate Report",
+    "exportFormat": "Export Format",
+    "dateRange": "Date Range"
+  },
+  "dashboard": {
+    "overview": "Overview",
+    "supplyChain": "Supply Chain",
+    "keyMetrics": "Key Metrics",
+    "recentAlerts": "Recent Alerts"
+  }
+}

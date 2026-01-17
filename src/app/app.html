@@ -1,0 +1,46 @@
+<div class="app-container">
+  <!-- Main Navigation -->
+  <nav class="main-nav">
+    <div class="nav-container">
+      <!-- Logo -->
+      <img
+        src="assets/securefood-logo.png"
+        alt="SecureFood"
+        class="nav-logo"
+        (click)="onLogoClick()"
+      />
+
+      <!-- Center Menu - only show after use case is selected -->
+      @if (isUseCaseSelected) {
+        <nav class="nav-menu">
+          @for (item of menuItems; track item.key) {
+            <button
+              class="nav-item"
+              [class.active]="isPageActive(item.page)"
+              (click)="onMenuClick(item.page)"
+            >
+              {{ item.key | translate }}
+            </button>
+          }
+        </nav>
+      }
+
+      <!-- Language Switcher -->
+      <div class="language-switcher">
+        <button
+          class="lang-toggle-btn"
+          (click)="toggleLanguage()"
+          [title]="'language.select' | translate"
+        >
+          <lucide-icon name="globe" class="lang-icon"></lucide-icon>
+          <span class="lang-code">{{ (currentLanguage$ | async)?.toUpperCase() }}</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <main class="main-content">
+    <router-outlet />
+  </main>
+</div>

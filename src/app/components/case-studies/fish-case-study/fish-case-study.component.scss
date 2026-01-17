@@ -1,0 +1,40 @@
+@use '../grain-case-study/grain-case-study.component.scss' as *;
+
+// Fish-specific overrides
+.header-icon.fish-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #0891b2 100%);
+}
+
+.text-cyan {
+  color: #0891b2;
+}
+
+// Emerald color for metric cards
+.metric-card.emerald {
+  border-left-color: #10b981;
+}
+
+.metric-card-icon.emerald {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+// Slate color for metric cards
+.metric-card.slate {
+  border-left-color: #64748b;
+}
+
+.metric-card-icon.slate {
+  background: rgba(100, 116, 139, 0.1);
+  color: #64748b;
+}
+
+// Chart title colors
+.chart-title.emerald {
+  color: #10b981;
+}
+
+// Chart card colors
+.chart-card.emerald {
+  border-top-color: #10b981;
+}

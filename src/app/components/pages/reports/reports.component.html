@@ -1,0 +1,197 @@
+<div class="reports-page">
+  <div class="page-container">
+    <!-- Header -->
+    <div class="page-header">
+      <!-- Back Button -->
+      <div class="back-section">
+        <button class="back-button" (click)="onBackToUseCases()">
+          <lucide-icon name="arrow-left"></lucide-icon>
+          <span>{{ 'buttons.backToUseCases' | translate }}</span>
+        </button>
+      </div>
+
+      <!-- Current Sector Indicator -->
+      <div class="sector-header">
+        <div class="sector-icon" [ngClass]="sectorGradientClass">
+          <lucide-icon [name]="sectorIcon"></lucide-icon>
+        </div>
+        <div class="sector-info">
+          <h1 class="page-title">
+            {{ sectorTitle }} <span class="title-accent">Reports</span>
+          </h1>
+          <p class="sector-name">{{ sectorDisplayNames[sector] }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      @for (stat of statsCards; track stat.title) {
+        <div
+          class="stat-card"
+          [ngClass]="[stat.bgGradient, stat.filter ? 'clickable' : '', activeFilter === stat.filter ? 'active' : '']"
+          (click)="onFilterChange(stat.filter)"
+        >
+          <div class="stat-content">
+            <div class="stat-icon" [ngClass]="stat.iconGradient">
+              <lucide-icon [name]="stat.icon"></lucide-icon>
+            </div>
+            <div class="stat-text">
+              <p class="stat-label" [style.color]="stat.textColor">{{ stat.title }}</p>
+              <p class="stat-value" [class.text-status]="stat.title === 'Status'">{{ stat.value }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Main Card with Tabs -->
+    <div class="main-card">
+      <!-- Tabs Header -->
+      <div class="tabs-header">
+        @for (tab of tabs; track tab.value) {
+          <button
+            class="tab-btn"
+            [class.active]="activeTab === tab.value"
+            (click)="onTabChange(tab.value)"
+          >
+            <lucide-icon [name]="tab.icon"></lucide-icon>
+            {{ tab.key }}
+          </button>
+        }
+      </div>
+
+      <!-- Files Tab Content -->
+      @if (activeTab === 'files') {
+        <div class="tab-content files-content">
+          @if (filteredFiles.length === 0) {
+            <div class="empty-state">
+              <div class="empty-icon-wrapper">
+                <lucide-icon name="file-text" class="empty-icon"></lucide-icon>
+              </div>
+              <p class="empty-title">No files match the filter</p>
+              <p class="empty-subtitle">Try selecting a different filter or upload new files</p>
+            </div>
+          } @else {
+            <div class="files-list">
+              @for (file of filteredFiles; track file.id) {
+                <div class="file-card">
+                  <div class="file-content">
+                    <!-- File Icon -->
+                    <div class="file-icon" [ngClass]="getFileIconGradient(file.type)">
+                      <lucide-icon name="file-text"></lucide-icon>
+                    </div>
+
+                    <!-- File Details -->
+                    <div class="file-details">
+                      <div class="file-name">{{ file.name }}</div>
+                      <div class="file-meta">
+                        <span class="file-date">
+                          <lucide-icon name="clock" class="meta-icon"></lucide-icon>
+                          {{ file.date }}
+                        </span>
+                        <span class="file-size-badge">{{ file.size }}</span>
+                        <span
+                          class="file-type-badge"
+                          [style.backgroundColor]="getTypeBadgeStyle(file.type).bg"
+                          [style.color]="getTypeBadgeStyle(file.type).color"
+                        >
+                          {{ file.type }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Status Badge -->
+                    <div class="sync-badge">
+                      <lucide-icon name="check-circle" class="sync-icon"></lucide-icon>
+                      Synced
+                    </div>
+
+                    <!-- Download Button -->
+                    <button class="icon-btn download-btn" (click)="onDownload(file)" title="Download">
+                      <lucide-icon name="download"></lucide-icon>
+                    </button>
+
+                    <!-- Delete Button -->
+                    <button class="icon-btn delete-btn" (click)="onDelete(file)" title="Delete">
+                      <lucide-icon name="trash-2"></lucide-icon>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Download Template Tab Content -->
+      @if (activeTab === 'download-template') {
+        <div class="tab-content template-content">
+          <div class="template-container">
+            <!-- Header -->
+            <div class="template-header">
+              <div class="template-header-icon gradient-blue">
+                <lucide-icon name="download"></lucide-icon>
+              </div>
+              <div class="template-header-text">
+                <h3>Download Templates</h3>
+                <p>Get started with pre-configured templates</p>
+              </div>
+            </div>
+
+            <p class="template-description">
+              Download pre-configured templates to ensure your data is formatted correctly for analysis.
+            </p>
+
+            <!-- Templates List -->
+            <div class="templates-list">
+              @for (template of templates; track template.id) {
+                <div class="template-card">
+                  <div class="template-card-content">
+                    <div class="template-info">
+                      <div class="template-icon" [ngClass]="template.iconGradient">
+                        <lucide-icon name="file-text"></lucide-icon>
+                      </div>
+                      <div class="template-details">
+                        <div class="template-name">{{ template.name }}</div>
+                        <div class="template-meta">
+                          <span
+                            class="template-format-badge"
+                            [style.backgroundColor]="template.badgeBg"
+                            [style.color]="template.badgeColor"
+                          >
+                            {{ template.format }} format
+                          </span>
+                          <span class="template-extension">{{ template.extension }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      class="download-template-btn"
+                      [ngClass]="template.buttonGradient"
+                      (click)="onDownloadTemplate(template)"
+                    >
+                      <lucide-icon name="download"></lucide-icon>
+                      Download
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Help Card -->
+            <div class="help-card">
+              <div class="help-icon gradient-teal">
+                <lucide-icon name="file-text"></lucide-icon>
+              </div>
+              <div class="help-content">
+                <h4>Need help with templates?</h4>
+                <p>Templates include pre-filled examples and instructions. Simply download, fill in your data following the format, and upload back to the platform for analysis.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+{
+  "pageTitle": "Digital Twin Analytics Platform",
+  "selectUseCase": "Select a Use Case",
+  "pageSubtitle": "Choose a food supply chain to explore its digital twin dashboard",
+  "comingSoon": "Coming Soon",
+  "clickToExplore": "Click to explore",
+  "cases": {
+    "grain": {
+      "title": "Grain Supply Chain",
+      "location": "Ukraine",
+      "partner": "UAGrain",
+      "description": "Monitor wheat and grain exports from Ukraine through the Black Sea corridor"
+    },
+    "fruits": {
+      "title": "Fruits & Vegetables",
+      "location": "Portugal",
+      "partner": "AgroPortugal",
+      "description": "Track fruit and vegetable production from farm to retail across Portugal"
+    },
+    "fish": {
+      "title": "Fish & Aquaculture",
+      "location": "Greece",
+      "partner": "HellasFish",
+      "description": "Monitor fish farming and aquaculture operations in the Mediterranean"
+    },
+    "aquaculture": {
+      "title": "Aquaculture",
+      "location": "Belgium",
+      "partner": "BelgiumAqua",
+      "description": "Track sustainable aquaculture practices and indoor fish farming systems"
+    },
+    "dairy": {
+      "title": "Dairy Products",
+      "location": "Netherlands",
+      "partner": "DutchDairy",
+      "description": "Monitor dairy production from farm to processor across the Netherlands"
+    }
+  },
+  "features": {
+    "realTime": "Real-time Monitoring",
+    "predictive": "Predictive Analytics",
+    "comprehensive": "Comprehensive Reports"
+  }
+}

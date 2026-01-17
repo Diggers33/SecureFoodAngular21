@@ -1,0 +1,116 @@
+<div class="use-case-selection-page">
+  <div class="page-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-badge">
+        <lucide-icon name="sparkles" class="badge-icon"></lucide-icon>
+        <span>{{ 'useCases.pageTitle' | translate }}</span>
+      </div>
+      <h1 class="hero-title">{{ 'useCases.selectUseCase' | translate }}</h1>
+      <p class="hero-subtitle">{{ 'useCases.pageSubtitle' | translate }}</p>
+    </div>
+
+    <!-- Use Cases Grid -->
+    <div class="use-cases-grid">
+      @for (useCase of useCases; track useCase.id) {
+        <div
+          class="use-case-card"
+          [class.active]="useCase.active"
+          [class.inactive]="!useCase.active"
+          (click)="onUseCaseClick(useCase)"
+        >
+          <!-- Header -->
+          <div class="card-header">
+            <!-- Click indicator (shown on hover for active cards) -->
+            @if (useCase.active) {
+              <div class="click-indicator">
+                <div class="indicator-circle">
+                  <lucide-icon name="arrow-right" class="indicator-icon"></lucide-icon>
+                </div>
+              </div>
+            }
+
+            <!-- Coming Soon Badge -->
+            @if (!useCase.active) {
+              <div class="coming-soon-badge">
+                {{ 'useCases.comingSoon' | translate }}
+              </div>
+            }
+
+            <!-- Icon -->
+            <div class="icon-wrapper">
+              <div class="card-icon" [style.backgroundColor]="useCase.iconColor">
+                <lucide-icon [name]="getIconName(useCase.icon)"></lucide-icon>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <h2 class="card-title">{{ useCase.titleKey | translate }}</h2>
+          </div>
+
+          <!-- Content Section -->
+          <div class="card-content">
+            <!-- Description -->
+            <p class="card-description">{{ useCase.descriptionKey | translate }}</p>
+
+            <!-- Location & Partner -->
+            <div class="card-meta">
+              <span class="location">📍 {{ useCase.locationKey | translate }}</span>
+              <span class="separator">•</span>
+              <span class="partner">{{ useCase.partnerKey | translate }}</span>
+            </div>
+
+            <!-- Hover Hint (only for active cards) -->
+            @if (useCase.active) {
+              <div class="explore-hint">
+                <span>
+                  Click to explore
+                  <lucide-icon name="arrow-right" class="hint-icon"></lucide-icon>
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Feature Info Cards -->
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-content">
+          <div class="icon-container-primary">
+            <lucide-icon name="trending-up" class="feature-icon"></lucide-icon>
+          </div>
+          <div class="feature-text">
+            <h3>{{ 'useCases.features.realTime' | translate }}</h3>
+            <p>Track KPIs, environmental factors, and supply chain health across all sectors</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-content">
+          <div class="icon-container-primary">
+            <lucide-icon name="sparkles" class="feature-icon"></lucide-icon>
+          </div>
+          <div class="feature-text">
+            <h3>{{ 'useCases.features.predictive' | translate }}</h3>
+            <p>ML-powered forecasting for disruptions, price changes, and risk scenarios</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-content">
+          <div class="icon-container-primary">
+            <lucide-icon name="check" class="feature-icon"></lucide-icon>
+          </div>
+          <div class="feature-text">
+            <h3>Comprehensive Reports</h3>
+            <p>Generate detailed analytics reports and export insights for decision-making</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

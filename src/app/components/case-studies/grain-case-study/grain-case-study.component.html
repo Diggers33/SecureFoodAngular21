@@ -1,0 +1,321 @@
+<div class="case-study-page">
+  <div class="page-container">
+    <!-- Back Button -->
+    <div class="mb-6">
+      <button class="back-button" (click)="onBackToUseCases()">
+        <lucide-icon name="arrow-left"></lucide-icon>
+        <span>{{ 'buttons.backToUseCases' | translate }}</span>
+      </button>
+    </div>
+
+    <!-- Header -->
+    <div class="header-section">
+      <div class="header-icon grain-icon">
+        <lucide-icon name="wheat"></lucide-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Grain <span class="text-teal">Dashboard</span></h1>
+        <p class="page-subtitle-text">Grain - Ukraine</p>
+      </div>
+    </div>
+
+    <p class="description-text">
+      Interactive visualization of the grain supply chain - hover over nodes for details, click path buttons to highlight routes
+    </p>
+
+    <!-- Path Controls -->
+    <div class="path-controls">
+      <span class="control-label">Highlight Path:</span>
+      <button class="path-btn" [class.active]="selectedPath === 'export'" (click)="selectPath('export')">
+        <lucide-icon name="ship"></lucide-icon>
+        Export Route
+      </button>
+      <button class="path-btn" [class.active]="selectedPath === 'domestic'" (click)="selectPath('domestic')">
+        <lucide-icon name="building-2"></lucide-icon>
+        Domestic Route
+      </button>
+      <button class="path-btn" [class.active]="selectedPath === 'feed'" (click)="selectPath('feed')">
+        <lucide-icon name="factory"></lucide-icon>
+        Feed Production
+      </button>
+    </div>
+
+    <!-- Supply Chain Diagram -->
+    <div class="diagram-card">
+      <!-- Zoom Controls -->
+      <div class="zoom-controls">
+        <button class="zoom-btn" (click)="zoomIn()" [disabled]="zoom >= 1.5" title="Zoom In">
+          <lucide-icon name="zoom-in"></lucide-icon>
+        </button>
+        <button class="zoom-btn" (click)="zoomOut()" [disabled]="zoom <= 0.5" title="Zoom Out">
+          <lucide-icon name="zoom-out"></lucide-icon>
+        </button>
+        <button class="zoom-btn" (click)="resetZoom()" title="Reset Zoom">
+          <lucide-icon name="maximize-2"></lucide-icon>
+        </button>
+        <span class="zoom-level">{{ getZoomPercent() }}%</span>
+      </div>
+
+      <div class="diagram-container" [style.transform]="'scale(' + zoom + ')'" [style.width]="(100 / zoom) + '%'">
+        <!-- SVG Connections -->
+        <svg class="connections-svg">
+          <defs>
+            <marker id="arrowhead-grain" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+              <path d="M0,0 L0,10 L10,5 z" fill="#14b8a6" />
+            </marker>
+            <marker id="arrowhead-grain-active" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+              <path d="M0,0 L0,12 L12,6 z" fill="#0d9488" />
+            </marker>
+          </defs>
+          @for (conn of connections; track $index) {
+            <path
+              [attr.d]="getConnectionPath(conn)"
+              [attr.stroke]="isConnectionHighlighted(conn.from, conn.to) ? '#0d9488' : '#14b8a6'"
+              [attr.stroke-width]="getConnectionStrokeWidth(conn)"
+              [attr.opacity]="getConnectionOpacity(conn)"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              [attr.marker-end]="isConnectionHighlighted(conn.from, conn.to) ? 'url(#arrowhead-grain-active)' : 'url(#arrowhead-grain)'"
+            />
+          }
+        </svg>
+
+        <!-- Nodes -->
+        @for (node of nodes; track node.id) {
+          <div
+            class="supply-node"
+            [style.left.px]="node.position.x"
+            [style.top.px]="node.position.y"
+            [style.opacity]="getNodeOpacity(node.id)"
+            (mouseenter)="onNodeHover(node.id)"
+            (mouseleave)="onNodeHover(null)"
+            (click)="onNodeClick(node.id)"
+          >
+            <div class="node-icon-wrapper" [class.highlighted]="isNodeHighlighted(node.id) || selectedNode === node.id">
+              <lucide-icon [name]="node.icon"></lucide-icon>
+              @if (isNodeHighlighted(node.id) || selectedNode === node.id) {
+                <div class="node-glow"></div>
+              }
+            </div>
+            <p class="node-label" [class.highlighted]="isNodeHighlighted(node.id) || selectedNode === node.id">{{ node.label }}</p>
+
+            <!-- Tooltip -->
+            @if (hoveredNode === node.id || selectedNode === node.id) {
+              <div class="node-tooltip" [class.expanded]="selectedNode === node.id" (click)="$event.stopPropagation()">
+                <div class="tooltip-header">
+                  <div>
+                    <p class="tooltip-title">{{ node.label }}</p>
+                    <p class="tooltip-desc">{{ node.description }}</p>
+                  </div>
+                  @if (selectedNode === node.id) {
+                    <button class="close-btn" (click)="closeNodeDetail($event)">&times;</button>
+                  }
+                </div>
+
+                <!-- Compact KPIs (when not expanded) -->
+                @if (selectedNode !== node.id) {
+                  <div class="kpi-list compact">
+                    @for (kpi of node.kpis.slice(0, 3); track kpi.name) {
+                      <div class="kpi-row">
+                        <span class="kpi-name">{{ kpi.name }}</span>
+                        <div class="kpi-value-wrap">
+                          <span class="kpi-val">{{ kpi.value }}</span>
+                          @if (kpi.trend === 'up') {
+                            <lucide-icon name="trending-up" class="trend-up"></lucide-icon>
+                          } @else if (kpi.trend === 'down') {
+                            <lucide-icon name="trending-down" class="trend-down"></lucide-icon>
+                          } @else {
+                            <span class="trend-stable"></span>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                  <p class="click-hint">Click to view detailed metrics</p>
+                }
+
+                <!-- Expanded KPIs and Metrics -->
+                @if (selectedNode === node.id) {
+                  <div class="kpi-list expanded">
+                    @for (kpi of node.kpis; track kpi.name) {
+                      <div class="kpi-row-expanded">
+                        <span class="kpi-name">{{ kpi.name }}</span>
+                        <div class="kpi-value-wrap">
+                          <span class="kpi-val">{{ kpi.value }}</span>
+                          @if (kpi.trend === 'up') {
+                            <lucide-icon name="trending-up" class="trend-up"></lucide-icon>
+                          } @else if (kpi.trend === 'down') {
+                            <lucide-icon name="trending-down" class="trend-down"></lucide-icon>
+                          } @else {
+                            <span class="trend-stable"></span>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+
+                  @if (node.metrics) {
+                    <div class="metrics-section-tooltip">
+                      <p class="metrics-title">Performance Metrics</p>
+                      <div class="metrics-grid">
+                        <div class="metric-box teal">
+                          <p class="metric-label">Throughput</p>
+                          <p class="metric-value">{{ node.metrics.throughput }}</p>
+                        </div>
+                        <div class="metric-box gray">
+                          <p class="metric-label">Efficiency</p>
+                          <p class="metric-value">{{ node.metrics.efficiency }}</p>
+                        </div>
+                        <div class="metric-box teal">
+                          <p class="metric-label">Quality</p>
+                          <p class="metric-value">{{ node.metrics.quality }}</p>
+                        </div>
+                        <div class="metric-box gray">
+                          <p class="metric-label">Cost</p>
+                          <p class="metric-value">{{ node.metrics.cost }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                }
+
+                <div class="tooltip-arrow"></div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Metric Cards -->
+    <div class="metric-cards-grid">
+      <div class="metric-card blue">
+        <div class="metric-card-content">
+          <div>
+            <p class="metric-card-label">Moisture Level</p>
+            <p class="metric-card-value">12.3%</p>
+          </div>
+          <div class="metric-card-icon blue">
+            <lucide-icon name="droplet"></lucide-icon>
+          </div>
+        </div>
+        <div class="metric-card-trend green">
+          <lucide-icon name="trending-down"></lucide-icon>
+          <span>Within safe range</span>
+        </div>
+      </div>
+
+      <div class="metric-card orange">
+        <div class="metric-card-content">
+          <div>
+            <p class="metric-card-label">Storage Temp</p>
+            <p class="metric-card-value">18.5C</p>
+          </div>
+          <div class="metric-card-icon orange">
+            <lucide-icon name="thermometer"></lucide-icon>
+          </div>
+        </div>
+        <div class="metric-card-trend orange">
+          <lucide-icon name="trending-up"></lucide-icon>
+          <span>Slightly elevated</span>
+        </div>
+      </div>
+
+      <div class="metric-card teal">
+        <div class="metric-card-content">
+          <div>
+            <p class="metric-card-label">Export Volume</p>
+            <p class="metric-card-value">2.4M</p>
+          </div>
+          <div class="metric-card-icon teal">
+            <lucide-icon name="ship"></lucide-icon>
+          </div>
+        </div>
+        <div class="metric-card-trend red">
+          <lucide-icon name="trending-down"></lucide-icon>
+          <span>-38% vs 2021</span>
+        </div>
+      </div>
+
+      <div class="metric-card red">
+        <div class="metric-card-content">
+          <div>
+            <p class="metric-card-label">Disruption Index</p>
+            <p class="metric-card-value">68</p>
+          </div>
+          <div class="metric-card-icon red">
+            <lucide-icon name="alert-triangle"></lucide-icon>
+          </div>
+        </div>
+        <div class="metric-card-trend red">
+          <lucide-icon name="trending-down"></lucide-icon>
+          <span>War impact zone</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trend Charts -->
+    <div class="charts-grid">
+      <div class="chart-card blue">
+        <h3 class="chart-title blue">Moisture Level Trend</h3>
+        <div echarts [options]="moistureChartOption" class="chart"></div>
+      </div>
+
+      <div class="chart-card orange">
+        <h3 class="chart-title orange">Storage Temperature Trend</h3>
+        <div echarts [options]="temperatureChartOption" class="chart"></div>
+      </div>
+
+      <div class="chart-card red">
+        <h3 class="chart-title red">Disruption Impact Trend</h3>
+        <div echarts [options]="disruptionChartOption" class="chart"></div>
+      </div>
+    </div>
+
+    <!-- Route Info Cards -->
+    <div class="route-cards-grid">
+      <div class="route-card teal">
+        <div class="route-icon teal">
+          <lucide-icon name="ship"></lucide-icon>
+        </div>
+        <div class="route-content">
+          <h3 class="route-title">Export Route</h3>
+          <p class="route-desc">Farm - Logistics - Sea Elevator - Ship - Foreign Markets. Primary export channel for international grain trade.</p>
+          <span class="route-badge teal">
+            <span class="badge-dot"></span>
+            International Trade
+          </span>
+        </div>
+      </div>
+
+      <div class="route-card slate">
+        <div class="route-icon slate">
+          <lucide-icon name="users"></lucide-icon>
+        </div>
+        <div class="route-content">
+          <h3 class="route-title">Domestic Route</h3>
+          <p class="route-desc">Farm - Field Elevator - Mills - Packaging - Distribution - Retail - Consumers. Serves domestic Ukrainian market.</p>
+          <span class="route-badge slate">
+            <span class="badge-dot"></span>
+            Local Market
+          </span>
+        </div>
+      </div>
+
+      <div class="route-card teal">
+        <div class="route-icon teal">
+          <lucide-icon name="factory"></lucide-icon>
+        </div>
+        <div class="route-content">
+          <h3 class="route-title">Feed Production</h3>
+          <p class="route-desc">Farm - Field Elevator - Mills - Feed Mills - Livestock Farms. Supports Ukrainian animal agriculture industry.</p>
+          <span class="route-badge teal">
+            <span class="badge-dot"></span>
+            Agriculture Supply
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

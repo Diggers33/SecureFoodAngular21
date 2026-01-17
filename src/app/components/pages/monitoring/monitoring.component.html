@@ -1,0 +1,153 @@
+<div class="monitoring-page">
+  <div class="page-container">
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-left">
+        <button class="back-button" (click)="onBackToUseCases()">
+          <lucide-icon name="arrow-left"></lucide-icon>
+          <span>{{ 'buttons.backToUseCases' | translate }}</span>
+        </button>
+
+        <!-- Current Sector Indicator -->
+        <div class="sector-indicator">
+          <div class="sector-icon" [ngClass]="sectorGradientClass">
+            <lucide-icon [name]="sectorIcon"></lucide-icon>
+          </div>
+          <div class="sector-info">
+            <h1 class="page-title">
+              {{ sectorDisplayNames[sector].split(' - ')[0] }}
+              <span class="accent">Monitoring</span>
+            </h1>
+            <p class="sector-name">{{ sectorDisplayNames[sector] }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Sector Selector -->
+        <div class="select-wrapper">
+          <select [value]="sector" (change)="onSectorChange($event)">
+            <option value="grain">Grain (Ukraine)</option>
+            <option value="fruits">Fruits & Vegetables (Portugal)</option>
+            <option value="fish">Fish (Greece)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time Range Selector -->
+    <div class="time-range-container">
+      <lucide-icon name="clock" class="time-icon"></lucide-icon>
+      <span class="time-label">Time Range:</span>
+      @for (range of timeRanges; track range) {
+        <button
+          class="time-btn"
+          [class.active]="selectedTimeRange === range"
+          [ngClass]="selectedTimeRange === range ? sectorGradientClass : ''"
+          (click)="onTimeRangeChange(range)"
+        >
+          {{ range }}
+        </button>
+      }
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      @for (kpi of currentKpis; track kpi.title) {
+        <div class="kpi-card" [ngClass]="kpi.colorClass">
+          <div class="kpi-header">
+            <div class="kpi-content">
+              <p class="kpi-title">{{ kpi.title }}</p>
+              <p class="kpi-value">{{ kpi.value }}</p>
+              <p class="kpi-unit">{{ kpi.unit }}</p>
+            </div>
+            <div class="kpi-icon-wrapper">
+              <lucide-icon [name]="kpi.icon"></lucide-icon>
+            </div>
+          </div>
+          <div class="kpi-footer" [class.pulse]="kpi.trend.pulse">
+            @if (kpi.trend.pulse) {
+              <div class="pulse-dot"></div>
+            } @else {
+              <lucide-icon
+                [name]="getTrendIcon(kpi.trend.direction)"
+                [class.trend-positive]="kpi.trend.isPositive"
+                [class.trend-negative]="!kpi.trend.isPositive"
+              ></lucide-icon>
+            }
+            <span
+              [class.trend-positive]="kpi.trend.isPositive"
+              [class.trend-negative]="!kpi.trend.isPositive"
+            >
+              {{ kpi.trend.label }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid">
+      <!-- Chart 1 -->
+      <div class="chart-card" [ngClass]="chart1Config.colorClass">
+        <div class="chart-header">
+          <div class="chart-icon">
+            <lucide-icon [name]="chart1Config.icon"></lucide-icon>
+          </div>
+          <div class="chart-info">
+            <h3 class="chart-title">{{ chart1Config.title }}</h3>
+            <p class="chart-subtitle">{{ chart1Config.subtitle }}</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div echarts [options]="chart1" class="echarts-chart"></div>
+        </div>
+      </div>
+
+      <!-- Chart 2 -->
+      <div class="chart-card" [ngClass]="chart2Config.colorClass">
+        <div class="chart-header">
+          <div class="chart-icon">
+            <lucide-icon [name]="chart2Config.icon"></lucide-icon>
+          </div>
+          <div class="chart-info">
+            <h3 class="chart-title">{{ chart2Config.title }}</h3>
+            <p class="chart-subtitle">{{ chart2Config.subtitle }}</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div echarts [options]="chart2" class="echarts-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="info-grid">
+      @for (card of currentInfoCards; track card.title) {
+        <div class="info-card" [ngClass]="card.colorClass">
+          <div class="info-header">
+            <div class="info-icon">
+              <lucide-icon [name]="card.icon"></lucide-icon>
+            </div>
+            <h3 class="info-title">{{ card.title }}</h3>
+          </div>
+          <div class="info-content">
+            @for (item of card.items; track item.label; let last = $last) {
+              @if (item.isStatus) {
+                <div class="info-status-item">
+                  <div class="status-dot" [ngClass]="item.colorClass"></div>
+                  <span class="status-label">{{ item.label }} ({{ item.value }})</span>
+                </div>
+              } @else {
+                <div class="info-item" [class.border-bottom]="!last">
+                  <span class="item-label">{{ item.label }}</span>
+                  <span class="item-value" [ngClass]="item.colorClass || ''">{{ item.value }}</span>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

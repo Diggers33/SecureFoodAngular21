@@ -1,0 +1,497 @@
+<div class="simulations-page">
+  <!-- Left Sidebar - Controls -->
+  <aside class="controls-sidebar">
+    <div class="sidebar-header">
+      <h2>Simulation Controls</h2>
+      <p>Configure your analysis parameters</p>
+    </div>
+
+    <!-- Variable Selector -->
+    <div class="control-group">
+      <label>Select Variable</label>
+      <div class="select-wrapper">
+        <select [(ngModel)]="selectedVariable">
+          @for (variable of variables; track variable) {
+            <option [value]="variable">{{ variable }}</option>
+          }
+        </select>
+        <lucide-icon name="chevron-down" class="select-icon"></lucide-icon>
+      </div>
+    </div>
+
+    <!-- Month & Year -->
+    <div class="control-row">
+      <div class="control-group half">
+        <label>Month</label>
+        <div class="select-wrapper">
+          <select [(ngModel)]="selectedMonth">
+            @for (month of months; track month) {
+              <option [value]="month">{{ month }}</option>
+            }
+          </select>
+          <lucide-icon name="chevron-down" class="select-icon small"></lucide-icon>
+        </div>
+      </div>
+      <div class="control-group half">
+        <label>Year</label>
+        <div class="select-wrapper">
+          <select [(ngModel)]="selectedYear">
+            @for (year of years; track year) {
+              <option [value]="year">{{ year }}</option>
+            }
+          </select>
+          <lucide-icon name="chevron-down" class="select-icon small"></lucide-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visualization Type -->
+    <div class="control-group">
+      <label>Visualization</label>
+      <div class="select-wrapper">
+        <select [(ngModel)]="selectedVisualization" (ngModelChange)="onVisualizationChange($event)">
+          @for (type of visualizationTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+        <lucide-icon name="chevron-down" class="select-icon"></lucide-icon>
+      </div>
+    </div>
+
+    <!-- Quick Access -->
+    <div class="quick-access">
+      <label>Quick Access</label>
+      @for (type of quickAccessTypes; track type) {
+        <button
+          class="quick-btn"
+          [class.active]="selectedVisualization === type"
+          (click)="onVisualizationChange(type)"
+        >
+          {{ type }}
+        </button>
+      }
+    </div>
+
+    <!-- Dataset Source -->
+    <div class="control-group">
+      <label>Dataset Source</label>
+      <div class="dataset-options">
+        <button
+          class="dataset-btn"
+          [class.active]="datasetType === 'platform'"
+          (click)="datasetType = 'platform'"
+        >
+          <span class="dot teal"></span>
+          Platform Data (default)
+        </button>
+        <button
+          class="dataset-btn"
+          [class.active]="datasetType === 'custom'"
+          (click)="datasetType = 'custom'; showUploadDialog = true"
+        >
+          <span class="dot purple"></span>
+          Custom Dataset
+        </button>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="sidebar-actions">
+      <button class="btn btn-secondary" (click)="showUploadDialog = true">
+        <lucide-icon name="upload"></lucide-icon>
+        Upload Custom Data
+      </button>
+      <button class="btn btn-warning" (click)="onRunSimulation()">
+        <lucide-icon name="refresh-cw"></lucide-icon>
+        Run Simulation
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Header -->
+    <header class="content-header">
+      <div class="header-top">
+        <div class="header-info">
+          <h1>Predictive Simulations</h1>
+          <p>ML-powered forecasting and scenario analysis</p>
+        </div>
+        <button class="back-button" (click)="onBackToUseCases()">
+          <lucide-icon name="arrow-left"></lucide-icon>
+          <span>{{ 'buttons.backToUseCases' | translate }}</span>
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs-container">
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'simulations'"
+          (click)="onTabChange('simulations')"
+        >
+          Simulations
+        </button>
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'saved'"
+          (click)="onTabChange('saved')"
+        >
+          Saved Scenarios ({{ savedSimulations.length }})
+        </button>
+        @if (selectedSimulationIds.length > 1) {
+          <button
+            class="tab-btn"
+            [class.active]="activeTab === 'comparison'"
+            (click)="onTabChange('comparison')"
+          >
+            Compare ({{ selectedSimulationIds.length }})
+          </button>
+        }
+      </div>
+
+      <!-- Sector Pills (only show in simulations tab) -->
+      @if (activeTab === 'simulations') {
+        <div class="sector-pills">
+          <span class="sector-label">Sector:</span>
+          <button
+            class="sector-pill"
+            [class.active]="sector === 'fish'"
+            [ngClass]="sector === 'fish' ? 'gradient-blue' : ''"
+            (click)="onSectorChange('fish')"
+          >
+            <lucide-icon name="fish"></lucide-icon>
+            Fish - Greece
+          </button>
+          <button
+            class="sector-pill"
+            [class.active]="sector === 'grain'"
+            [ngClass]="sector === 'grain' ? 'gradient-amber' : ''"
+            (click)="onSectorChange('grain')"
+          >
+            <lucide-icon name="wheat"></lucide-icon>
+            Grain - Ukraine
+          </button>
+          <button
+            class="sector-pill"
+            [class.active]="sector === 'fruits'"
+            [ngClass]="sector === 'fruits' ? 'gradient-green' : ''"
+            (click)="onSectorChange('fruits')"
+          >
+            <lucide-icon name="apple"></lucide-icon>
+            Fruits & Vegetables - Portugal
+          </button>
+        </div>
+      }
+    </header>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Simulations Tab -->
+      @if (activeTab === 'simulations') {
+        <div class="simulations-content">
+          <!-- Header with variable name -->
+          <div class="viz-header">
+            <div>
+              <h2>
+                Predictive Simulation: <span class="accent">{{ selectedVariable }}</span>
+              </h2>
+              <p>ML-powered forecasting and risk analysis for supply chain optimization</p>
+            </div>
+            <span class="viz-badge">{{ selectedVisualization }}</span>
+          </div>
+
+          <!-- KPI Cards -->
+          <div class="kpi-grid">
+            @for (kpi of kpiCards; track kpi.title) {
+              <div class="kpi-card" [ngClass]="kpi.colorClass">
+                <div class="kpi-icon">
+                  <lucide-icon [name]="kpi.icon"></lucide-icon>
+                </div>
+                <div class="kpi-info">
+                  <p class="kpi-title">{{ kpi.title }}</p>
+                  <p class="kpi-value">{{ kpi.value }}</p>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Main Chart -->
+          <div class="chart-card main-chart">
+            @if (selectedVisualization === 'Confusion Matrix') {
+              <h3>ML Model Performance - Disruption Prediction</h3>
+              <div class="confusion-matrix">
+                <div class="matrix-labels-y">
+                  <span>Disruption</span>
+                  <span>No Disruption</span>
+                </div>
+                <div class="matrix-content">
+                  <div class="matrix-grid">
+                    @for (cell of confusionMatrix; track cell.label) {
+                      <div
+                        class="matrix-cell"
+                        [style.background-color]="getConfusionMatrixColor(cell.x, cell.y)"
+                      >
+                        {{ cell.value }}
+                      </div>
+                    }
+                  </div>
+                  <div class="matrix-labels-x">
+                    <span>No Disruption</span>
+                    <span>Disruption</span>
+                  </div>
+                </div>
+              </div>
+              <div class="matrix-legend">
+                <span><span class="legend-dot green"></span> True Negative</span>
+                <span><span class="legend-dot teal"></span> True Positive</span>
+                <span><span class="legend-dot red"></span> False Positive/Negative</span>
+              </div>
+            } @else if (selectedVisualization === 'Heatmap') {
+              <h3>Risk Heatmap - Supply Chain Nodes</h3>
+              <div class="heatmap-grid">
+                @for (cell of heatmapData; track $index) {
+                  <div
+                    class="heatmap-cell"
+                    [style.background-color]="getHeatmapColor(cell.value)"
+                    [title]="'Risk: ' + (cell.value * 100).toFixed(0) + '%'"
+                  >
+                    {{ (cell.value * 100).toFixed(0) }}
+                  </div>
+                }
+              </div>
+              <div class="heatmap-legend">
+                <div class="legend-item"><span class="box green"></span> Low Risk</div>
+                <div class="legend-item"><span class="box orange"></span> Medium Risk</div>
+                <div class="legend-item"><span class="box red"></span> High Risk</div>
+              </div>
+            } @else {
+              <h3>
+                @switch (selectedVisualization) {
+                  @case ('Time Series') { Disruption Forecasting with ML Model }
+                  @case ('Bar Chart') { Demand vs Supply Analysis }
+                  @case ('Logistic Curve') { Market Price Response Curve }
+                  @case ('Scatter Plot') { Volume vs Quality Correlation Analysis }
+                  @case ('Sensitivity Line Plot') { Parameter Sensitivity Analysis }
+                  @default { Visualization }
+                }
+              </h3>
+              <div class="chart-container">
+                <div echarts [options]="mainChart" class="echarts-main"></div>
+              </div>
+            }
+          </div>
+
+          <!-- Feature Importance Chart -->
+          <div class="chart-card feature-chart">
+            <h3>ML Feature Importance</h3>
+            <div class="chart-container small">
+              <div echarts [options]="featureImportanceChart" class="echarts-feature"></div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Saved Scenarios Tab -->
+      @if (activeTab === 'saved') {
+        <div class="saved-content">
+          @if (savedSimulations.length === 0) {
+            <div class="empty-state">
+              <lucide-icon name="folder-open" class="empty-icon"></lucide-icon>
+              <h3>No Saved Simulations</h3>
+              <p>Run a simulation and save it to see it here</p>
+            </div>
+          } @else {
+            <div class="saved-header">
+              <h2>Saved Simulations</h2>
+              <span class="badge">{{ savedSimulations.length }} scenarios</span>
+            </div>
+            <div class="saved-grid">
+              @for (sim of savedSimulations; track sim.id) {
+                <div
+                  class="saved-card"
+                  [class.selected]="isSimulationSelected(sim.id)"
+                  (click)="toggleSimulationSelection(sim.id)"
+                >
+                  <div class="saved-card-header">
+                    <div class="saved-info">
+                      <div class="sector-icon" [ngClass]="'gradient-' + (sim.sector === 'fish' ? 'blue' : sim.sector === 'grain' ? 'amber' : 'green')">
+                        <lucide-icon [name]="sim.sector === 'fish' ? 'fish' : sim.sector === 'grain' ? 'wheat' : 'apple'"></lucide-icon>
+                      </div>
+                      <div>
+                        <p class="saved-name">{{ sim.name }}</p>
+                        <p class="saved-sector">{{ sectorDisplayNames[sim.sector] }}</p>
+                      </div>
+                    </div>
+                    <div class="saved-actions">
+                      <button class="icon-btn" (click)="onDuplicateSimulation(sim); $event.stopPropagation()">
+                        <lucide-icon name="file-text"></lucide-icon>
+                      </button>
+                      <button class="icon-btn danger" (click)="onDeleteSimulation(sim.id); $event.stopPropagation()">
+                        <lucide-icon name="trash-2"></lucide-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="saved-meta">
+                    <div class="meta-row">
+                      <span>Variable:</span>
+                      <span>{{ sim.variable }}</span>
+                    </div>
+                    <div class="meta-row">
+                      <span>Period:</span>
+                      <span>{{ sim.month }} {{ sim.year }}</span>
+                    </div>
+                    <div class="meta-row">
+                      <span>Created:</span>
+                      <span>{{ sim.timestamp | date:'shortDate' }}</span>
+                    </div>
+                  </div>
+                  <div class="saved-selection" [class.active]="isSimulationSelected(sim.id)">
+                    @if (isSimulationSelected(sim.id)) {
+                      <lucide-icon name="check"></lucide-icon> Selected for comparison
+                    } @else {
+                      Click to compare
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Comparison Tab -->
+      @if (activeTab === 'comparison' && selectedSimulationIds.length > 1) {
+        <div class="comparison-content">
+          <div class="comparison-header">
+            <div class="comparison-icon">
+              <lucide-icon name="bar-chart-3"></lucide-icon>
+            </div>
+            <div>
+              <h2>Scenario Comparison</h2>
+              <p>Comparing {{ selectedSimulationIds.length }} simulation scenarios</p>
+            </div>
+          </div>
+
+          <!-- Comparison Charts -->
+          <div class="comparison-charts">
+            <div class="comparison-chart-card">
+              <h4>Demand Comparison</h4>
+              <div echarts [options]="comparisonCharts.demand" class="comparison-echart"></div>
+            </div>
+            <div class="comparison-chart-card">
+              <h4>Supply Comparison</h4>
+              <div echarts [options]="comparisonCharts.supply" class="comparison-echart"></div>
+            </div>
+            <div class="comparison-chart-card">
+              <h4>Inventory Comparison</h4>
+              <div echarts [options]="comparisonCharts.inventory" class="comparison-echart"></div>
+            </div>
+          </div>
+
+          <!-- Comparison Summary -->
+          <div class="comparison-summary">
+            @for (simId of selectedSimulationIds; track simId) {
+              @for (sim of savedSimulations; track sim.id) {
+                @if (sim.id === simId) {
+                  <div class="summary-card">
+                    <h4>{{ sim.name }}</h4>
+                    <div class="summary-stats">
+                      <div class="stat-row">
+                        <span>Avg Demand:</span>
+                        <span>{{ getSimulationAvg(sim, 'demand').toFixed(1) }}</span>
+                      </div>
+                      <div class="stat-row">
+                        <span>Avg Supply:</span>
+                        <span>{{ getSimulationAvg(sim, 'supply').toFixed(1) }}</span>
+                      </div>
+                      <div class="stat-row">
+                        <span>Avg Inventory:</span>
+                        <span>{{ getSimulationAvg(sim, 'inventory').toFixed(1) }}</span>
+                      </div>
+                      <div class="stat-row border-top">
+                        <span>Gap:</span>
+                        <span [class.text-red]="getSimulationGap(sim) > 0" [class.text-green]="getSimulationGap(sim) <= 0">
+                          {{ getSimulationGap(sim).toFixed(1) }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </main>
+
+  <!-- Save Dialog -->
+  @if (showSaveDialog) {
+    <div class="dialog-overlay" (click)="closeSaveDialog()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <h3>Save Simulation</h3>
+          <button class="close-btn" (click)="closeSaveDialog()">
+            <lucide-icon name="x"></lucide-icon>
+          </button>
+        </div>
+        <div class="dialog-content">
+          <div class="form-group">
+            <label>Simulation Name</label>
+            <input
+              type="text"
+              [(ngModel)]="simulationName"
+              placeholder="Enter a name for this simulation"
+            />
+          </div>
+          <div class="dialog-info">
+            <div class="info-row">
+              <span>Variable:</span>
+              <span>{{ selectedVariable }}</span>
+            </div>
+            <div class="info-row">
+              <span>Period:</span>
+              <span>{{ selectedMonth }} {{ selectedYear }}</span>
+            </div>
+            <div class="info-row">
+              <span>Sector:</span>
+              <span>{{ sectorDisplayNames[sector] }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" (click)="closeSaveDialog()">Cancel</button>
+          <button class="btn btn-primary" (click)="onSaveSimulation()" [disabled]="!simulationName.trim()">
+            Save Simulation
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Upload Dialog -->
+  @if (showUploadDialog) {
+    <div class="dialog-overlay" (click)="closeUploadDialog()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <h3>Upload Custom Dataset</h3>
+          <button class="close-btn" (click)="closeUploadDialog()">
+            <lucide-icon name="x"></lucide-icon>
+          </button>
+        </div>
+        <div class="dialog-content">
+          <div class="upload-zone">
+            <lucide-icon name="upload" class="upload-icon"></lucide-icon>
+            <p>Drag and drop your file here, or click to browse</p>
+            <p class="upload-hint">Supports CSV, Excel files</p>
+            <input type="file" accept=".csv,.xlsx,.xls" (change)="onFileUpload($event)" />
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" (click)="closeUploadDialog()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

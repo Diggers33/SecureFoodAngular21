@@ -1,0 +1,146 @@
+{
+  "appName": "SecureFood Digital Twin",
+  "navigation": {
+    "dashboard": "Panel",
+    "monitoring": "Monitoreo",
+    "simulations": "Simulaciones",
+    "reports": "Informes",
+    "home": "Inicio"
+  },
+  "buttons": {
+    "backToUseCases": "Volver a Casos de Uso",
+    "viewDetails": "Ver Detalles",
+    "analyze": "Analizar",
+    "export": "Exportar",
+    "download": "Descargar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "apply": "Aplicar",
+    "reset": "Restablecer",
+    "close": "Cerrar",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "refresh": "Actualizar",
+    "filter": "Filtrar",
+    "search": "Buscar",
+    "showMore": "Mostrar Más",
+    "showLess": "Mostrar Menos"
+  },
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "pending": "Pendiente",
+    "completed": "Completado",
+    "inProgress": "En Progreso",
+    "critical": "Crítico",
+    "warning": "Advertencia",
+    "normal": "Normal",
+    "good": "Bueno",
+    "excellent": "Excelente"
+  },
+  "time": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "thisWeek": "Esta Semana",
+    "thisMonth": "Este Mes",
+    "lastMonth": "Mes Pasado",
+    "last7Days": "Últimos 7 Días",
+    "last30Days": "Últimos 30 Días",
+    "last90Days": "Últimos 90 Días",
+    "customRange": "Rango Personalizado"
+  },
+  "units": {
+    "temperature": "°C",
+    "percentage": "%",
+    "currency": "€",
+    "weight": "kg",
+    "volume": "L"
+  },
+  "messages": {
+    "loading": "Cargando...",
+    "noData": "No hay datos disponibles",
+    "error": "Ocurrió un error",
+    "success": "Operación exitosa",
+    "confirmAction": "¿Está seguro de que desea continuar?",
+    "dataUpdated": "Datos actualizados correctamente",
+    "savingChanges": "Guardando cambios..."
+  },
+  "language": {
+    "select": "Seleccionar Idioma",
+    "english": "English",
+    "spanish": "Español"
+  },
+  "useCases": {
+    "pageTitle": "Plataforma de Análisis Digital Twin",
+    "selectUseCase": "Seleccione un Caso de Uso",
+    "pageSubtitle": "Elija una cadena de suministro de alimentos para explorar su panel de digital twin",
+    "comingSoon": "Próximamente",
+    "clickToExplore": "Haga clic para explorar",
+    "cases": {
+      "grain": {
+        "title": "Cadena de Suministro de Granos",
+        "location": "Ucrania",
+        "partner": "UAGrain",
+        "description": "Monitorear las exportaciones de trigo y granos de Ucrania a través del corredor del Mar Negro"
+      },
+      "fruits": {
+        "title": "Frutas y Verduras",
+        "location": "Portugal",
+        "partner": "AgroPortugal",
+        "description": "Seguimiento de la producción de frutas y verduras desde la granja hasta el comercio minorista en Portugal"
+      },
+      "fish": {
+        "title": "Pesca y Acuicultura",
+        "location": "Grecia",
+        "partner": "HellasFish",
+        "description": "Monitorear las operaciones de piscicultura y acuicultura en el Mediterráneo"
+      },
+      "aquaculture": {
+        "title": "Acuicultura",
+        "location": "Bélgica",
+        "partner": "BelgiumAqua",
+        "description": "Seguimiento de prácticas sostenibles de acuicultura y sistemas de piscicultura en interior"
+      },
+      "dairy": {
+        "title": "Productos Lácteos",
+        "location": "Países Bajos",
+        "partner": "DutchDairy",
+        "description": "Monitorear la producción láctea desde la granja hasta el procesador en los Países Bajos"
+      }
+    },
+    "features": {
+      "realTime": "Monitoreo en Tiempo Real",
+      "predictive": "Análisis Predictivo",
+      "comprehensive": "Informes Completos"
+    }
+  },
+  "monitoring": {
+    "title": "Monitoreo del Sector",
+    "selectSector": "Seleccionar Sector",
+    "timeRange": "Rango de Tiempo",
+    "metrics": "Métricas",
+    "alerts": "Alertas",
+    "trends": "Tendencias"
+  },
+  "simulations": {
+    "title": "Simulaciones",
+    "newSimulation": "Nueva Simulación",
+    "savedSimulations": "Simulaciones Guardadas",
+    "parameters": "Parámetros",
+    "results": "Resultados",
+    "compare": "Comparar"
+  },
+  "reports": {
+    "title": "Informes",
+    "availableReports": "Informes Disponibles",
+    "generateReport": "Generar Informe",
+    "exportFormat": "Formato de Exportación",
+    "dateRange": "Rango de Fechas"
+  },
+  "dashboard": {
+    "overview": "Resumen",
+    "supplyChain": "Cadena de Suministro",
+    "keyMetrics": "Métricas Clave",
+    "recentAlerts": "Alertas Recientes"
+  }
+}

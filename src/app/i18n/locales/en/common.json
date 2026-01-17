@@ -1,0 +1,73 @@
+{
+  "appName": "SecureFood Digital Twin",
+  "navigation": {
+    "dashboard": "Dashboard",
+    "monitoring": "Monitoring",
+    "simulations": "Simulations",
+    "reports": "Reports",
+    "home": "Home"
+  },
+  "buttons": {
+    "backToUseCases": "Back to Use Cases",
+    "viewDetails": "View Details",
+    "analyze": "Analyze",
+    "export": "Export",
+    "download": "Download",
+    "save": "Save",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "reset": "Reset",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous",
+    "refresh": "Refresh",
+    "filter": "Filter",
+    "search": "Search",
+    "showMore": "Show More",
+    "showLess": "Show Less"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "critical": "Critical",
+    "warning": "Warning",
+    "normal": "Normal",
+    "good": "Good",
+    "excellent": "Excellent"
+  },
+  "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "last90Days": "Last 90 Days",
+    "customRange": "Custom Range"
+  },
+  "units": {
+    "temperature": "°C",
+    "percentage": "%",
+    "currency": "€",
+    "weight": "kg",
+    "volume": "L"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "noData": "No data available",
+    "error": "An error occurred",
+    "success": "Operation successful",
+    "confirmAction": "Are you sure you want to proceed?",
+    "dataUpdated": "Data updated successfully",
+    "savingChanges": "Saving changes..."
+  },
+  "language": {
+    "select": "Select Language",
+    "english": "English",
+    "spanish": "Español"
+  }
+}
