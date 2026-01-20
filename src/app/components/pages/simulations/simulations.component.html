@@ -130,7 +130,16 @@
           [class.active]="activeTab === 'simulations'"
           (click)="onTabChange('simulations')"
         >
+          <lucide-icon name="activity"></lucide-icon>
           Simulations
+        </button>
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'forecasting'"
+          (click)="onTabChange('forecasting')"
+        >
+          <lucide-icon name="target"></lucide-icon>
+          Forecasting
         </button>
         <button
           class="tab-btn"
@@ -150,8 +159,8 @@
         }
       </div>
 
-      <!-- Sector Pills (only show in simulations tab) -->
-      @if (activeTab === 'simulations') {
+      <!-- Sector Pills (show in simulations and forecasting tabs) -->
+      @if (activeTab === 'simulations' || activeTab === 'forecasting') {
         <div class="sector-pills">
           <span class="sector-label">Sector:</span>
           <button
@@ -290,6 +299,117 @@
             <h3>ML Feature Importance</h3>
             <div class="chart-container small">
               <div echarts [options]="featureImportanceChart" class="echarts-feature"></div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Forecasting Tab -->
+      @if (activeTab === 'forecasting') {
+        <div class="forecasting-content">
+          <div class="forecast-grid">
+            <!-- Fish Production Volume Forecast -->
+            <div class="forecast-card forecast-card-green">
+              <div class="forecast-header">
+                <div class="forecast-icon green">
+                  <lucide-icon name="trending-up"></lucide-icon>
+                </div>
+                <div class="forecast-title-section">
+                  <h3>Fish Production Volume Forecast</h3>
+                  <p>12-month prediction based on historical data</p>
+                </div>
+              </div>
+              <div class="forecast-chart-container">
+                <div echarts [options]="productionForecastChart" class="forecast-echart"></div>
+              </div>
+              <div class="forecast-footer green">
+                <div class="forecast-metric">
+                  <span class="metric-label">Forecast Model:</span>
+                  <span class="metric-value">ARIMA (2,1,2)</span>
+                </div>
+                <div class="forecast-metric">
+                  <span class="metric-label">Prediction Accuracy:</span>
+                  <span class="metric-value">94.3%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Water Temperature Forecast -->
+            <div class="forecast-card forecast-card-blue">
+              <div class="forecast-header">
+                <div class="forecast-icon blue">
+                  <lucide-icon name="trending-up"></lucide-icon>
+                </div>
+                <div class="forecast-title-section">
+                  <h3>Water Temperature Forecast</h3>
+                  <p>8-week prediction with confidence intervals</p>
+                </div>
+              </div>
+              <div class="forecast-chart-container">
+                <div echarts [options]="temperatureForecastChart" class="forecast-echart"></div>
+              </div>
+              <div class="forecast-footer blue">
+                <div class="forecast-metric">
+                  <span class="metric-label">Forecast Model:</span>
+                  <span class="metric-value">Prophet ML</span>
+                </div>
+                <div class="forecast-metric">
+                  <span class="metric-label">Confidence Level:</span>
+                  <span class="metric-value">95%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Market Demand Forecast -->
+            <div class="forecast-card forecast-card-amber">
+              <div class="forecast-header">
+                <div class="forecast-icon amber">
+                  <lucide-icon name="bar-chart-3"></lucide-icon>
+                </div>
+                <div class="forecast-title-section">
+                  <h3>Market Demand Forecast</h3>
+                  <p>Quarterly demand prediction for 2025</p>
+                </div>
+              </div>
+              <div class="forecast-chart-container">
+                <div echarts [options]="demandForecastChart" class="forecast-echart"></div>
+              </div>
+              <div class="forecast-footer amber">
+                <div class="forecast-metric">
+                  <span class="metric-label">Growth Rate:</span>
+                  <span class="metric-value highlight">+8.2% annually</span>
+                </div>
+                <div class="forecast-metric">
+                  <span class="metric-label">Model RMSE:</span>
+                  <span class="metric-value">142 tons</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fish Price Forecast -->
+            <div class="forecast-card forecast-card-purple">
+              <div class="forecast-header">
+                <div class="forecast-icon purple">
+                  <lucide-icon name="activity"></lucide-icon>
+                </div>
+                <div class="forecast-title-section">
+                  <h3>Fish Price Forecast (€/kg)</h3>
+                  <p>6-month price projection with seasonality</p>
+                </div>
+              </div>
+              <div class="forecast-chart-container">
+                <div echarts [options]="priceForecastChart" class="forecast-echart"></div>
+              </div>
+              <div class="forecast-footer purple">
+                <div class="forecast-metric">
+                  <span class="metric-label">Seasonal Pattern:</span>
+                  <span class="metric-value highlight">Peak in May</span>
+                </div>
+                <div class="forecast-metric">
+                  <span class="metric-label">MAE:</span>
+                  <span class="metric-value">€0.32/kg</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
