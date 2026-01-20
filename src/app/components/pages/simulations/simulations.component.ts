@@ -288,4 +288,38 @@ export class SimulationsComponent implements OnInit {
       this.showUploadDialog = false;
     }
   }
+
+  onDownloadSimulation(): void {
+    const simulationData = {
+      metadata: {
+        sector: this.sector,
+        sectorName: this.sectorDisplayNames[this.sector],
+        variable: this.selectedVariable,
+        month: this.selectedMonth,
+        year: this.selectedYear,
+        visualization: this.selectedVisualization,
+        exportedAt: new Date().toISOString()
+      },
+      forecastData: this.forecastData,
+      simulationData: this.simulationData,
+      featureImportance: this.featureImportanceData,
+      confusionMatrix: this.confusionMatrix,
+      kpiCards: this.kpiCards.map(kpi => ({
+        title: kpi.title,
+        value: kpi.value
+      }))
+    };
+
+    const jsonString = JSON.stringify(simulationData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `simulation_${this.sector}_${this.selectedVariable.replace(/\s+/g, '_')}_${this.selectedMonth}_${this.selectedYear}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
 }
