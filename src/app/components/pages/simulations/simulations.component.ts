@@ -97,6 +97,12 @@ export class SimulationsComponent implements OnInit {
     inventory: {}
   };
 
+  // Forecast charts
+  productionForecastChart: EChartsOption = {};
+  temperatureForecastChart: EChartsOption = {};
+  demandForecastChart: EChartsOption = {};
+  priceForecastChart: EChartsOption = {};
+
   // Dynamic data
   heatmapData: { x: number; y: number; value: number }[] = [];
   scatterData: { volume: number; quality: number }[] = [];
@@ -107,6 +113,7 @@ export class SimulationsComponent implements OnInit {
     this.sector = routeSector || this.navigationService.currentSector || 'grain';
     this.generateSampleData();
     this.updateCharts();
+    this.initializeForecastCharts();
   }
 
   generateSampleData(): void {
@@ -156,6 +163,170 @@ export class SimulationsComponent implements OnInit {
     this.comparisonCharts.demand = getComparisonChart(selectedSims, times, 'demand');
     this.comparisonCharts.supply = getComparisonChart(selectedSims, times, 'supply');
     this.comparisonCharts.inventory = getComparisonChart(selectedSims, times, 'inventory');
+  }
+
+  initializeForecastCharts(): void {
+    // Production Volume Forecast (12-month)
+    this.productionForecastChart = {
+      grid: { left: '8%', right: '5%', top: '10%', bottom: '15%' },
+      xAxis: {
+        type: 'category',
+        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        axisLine: { lineStyle: { color: '#e5e7eb' } },
+        axisLabel: { color: '#6b7280', fontSize: 10 }
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: { show: false },
+        splitLine: { lineStyle: { color: '#f3f4f6' } },
+        axisLabel: { color: '#6b7280', fontSize: 10 }
+      },
+      series: [
+        {
+          name: 'Actual',
+          type: 'line',
+          data: [850, 920, 980, 1050, 1120, 1180, null, null, null, null, null, null],
+          smooth: true,
+          lineStyle: { color: '#10b981', width: 2 },
+          itemStyle: { color: '#10b981' },
+          symbol: 'circle',
+          symbolSize: 6
+        },
+        {
+          name: 'Forecast',
+          type: 'line',
+          data: [null, null, null, null, null, 1180, 1250, 1300, 1350, 1420, 1480, 1550],
+          smooth: true,
+          lineStyle: { color: '#f59e0b', width: 2, type: 'dashed' },
+          itemStyle: { color: '#f59e0b' },
+          symbol: 'circle',
+          symbolSize: 6
+        }
+      ]
+    };
+
+    // Temperature Forecast (8-week)
+    this.temperatureForecastChart = {
+      grid: { left: '8%', right: '5%', top: '10%', bottom: '15%' },
+      xAxis: {
+        type: 'category',
+        data: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
+        axisLine: { lineStyle: { color: '#e5e7eb' } },
+        axisLabel: { color: '#6b7280', fontSize: 10 }
+      },
+      yAxis: {
+        type: 'value',
+        min: 14,
+        max: 21,
+        axisLine: { show: false },
+        splitLine: { lineStyle: { color: '#f3f4f6' } },
+        axisLabel: { color: '#6b7280', fontSize: 10 }
+      },
+      series: [
+        {
+          name: 'Actual',
+          type: 'line',
+          data: [15.2, 15.8, 16.1, 16.8, null, null, null, null],
+          smooth: true,
+          lineStyle: { color: '#8b5cf6', width: 2 },
+          itemStyle: { color: '#8b5cf6' },
+          symbol: 'circle',
+          symbolSize: 6
+        },
+        {
+          name: 'Forecast',
+          type: 'line',
+          data: [null, null, null, 16.8, 17.5, 18.2, 18.9, 19.5],
+          smooth: true,
+          lineStyle: { color: '#f59e0b', width: 2, type: 'dashed' },
+          itemStyle: { color: '#f59e0b' },
+          symbol: 'circle',
+          symbolSize: 6
+        }
+      ]
+    };
+
+    // Market Demand Forecast (Quarterly)
+    this.demandForecastChart = {
+      grid: { left: '10%', right: '5%', top: '10%', bottom: '15%' },
+      xAxis: {
+        type: 'category',
+        data: ['2024 Q3', '2024 Q4', '2025 Q1', '2025 Q2', '2025 Q3', '2025 Q4'],
+        axisLine: { lineStyle: { color: '#e5e7eb' } },
+        axisLabel: { color: '#6b7280', fontSize: 10 }
+      },
+      yAxis: {
+        type: 'value',
+        min: 0,
+        max: 6000,
+        axisLine: { show: false },
+        splitLine: { lineStyle: { color: '#f3f4f6' } },
+        axisLabel: { color: '#6b7280', fontSize: 10 }
+      },
+      series: [
+        {
+          name: 'Actual',
+          type: 'line',
+          data: [3200, 3450, 3680, null, null, null],
+          smooth: true,
+          lineStyle: { color: '#10b981', width: 2 },
+          itemStyle: { color: '#10b981' },
+          symbol: 'circle',
+          symbolSize: 6
+        },
+        {
+          name: 'Forecast',
+          type: 'line',
+          data: [null, null, 3680, 4100, 4550, 4950],
+          smooth: true,
+          lineStyle: { color: '#f59e0b', width: 2, type: 'dashed' },
+          itemStyle: { color: '#f59e0b' },
+          symbol: 'circle',
+          symbolSize: 6
+        }
+      ]
+    };
+
+    // Fish Price Forecast (6-month)
+    this.priceForecastChart = {
+      grid: { left: '8%', right: '5%', top: '10%', bottom: '15%' },
+      xAxis: {
+        type: 'category',
+        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+        axisLine: { lineStyle: { color: '#e5e7eb' } },
+        axisLabel: { color: '#6b7280', fontSize: 10 }
+      },
+      yAxis: {
+        type: 'value',
+        min: 12,
+        max: 16,
+        axisLine: { show: false },
+        splitLine: { lineStyle: { color: '#f3f4f6' } },
+        axisLabel: { color: '#6b7280', fontSize: 10 }
+      },
+      series: [
+        {
+          name: 'Actual',
+          type: 'line',
+          data: [12.5, 13.2, 13.8, 14.5, null, null, null, null, null],
+          smooth: true,
+          lineStyle: { color: '#8b5cf6', width: 2 },
+          itemStyle: { color: '#8b5cf6' },
+          symbol: 'circle',
+          symbolSize: 6
+        },
+        {
+          name: 'Forecast',
+          type: 'line',
+          data: [null, null, null, 14.5, 15.2, 15.6, 14.8, 14.2, 13.8],
+          smooth: true,
+          lineStyle: { color: '#f59e0b', width: 2, type: 'dashed' },
+          itemStyle: { color: '#f59e0b' },
+          symbol: 'circle',
+          symbolSize: 6
+        }
+      ]
+    };
   }
 
   get sectorIcon(): string {
