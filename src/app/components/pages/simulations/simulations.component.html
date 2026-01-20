@@ -198,7 +198,10 @@
               </h2>
               <p>ML-powered forecasting and risk analysis for supply chain optimization</p>
             </div>
-            <span class="viz-badge">{{ selectedVisualization }}</span>
+            <button class="download-simulation-btn" (click)="onDownloadSimulation()">
+              <lucide-icon name="download"></lucide-icon>
+              Download Simulation
+            </button>
           </div>
 
           <!-- KPI Cards -->
