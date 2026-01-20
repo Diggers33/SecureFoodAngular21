@@ -130,16 +130,18 @@
           [class.active]="activeTab === 'simulations'"
           (click)="onTabChange('simulations')"
         >
-          <lucide-icon name="activity"></lucide-icon>
-          Simulations
+          <lucide-icon name="trending-up"></lucide-icon>
+          SIMULATIONS
         </button>
         <button
           class="tab-btn"
           [class.active]="activeTab === 'forecasting'"
           (click)="onTabChange('forecasting')"
         >
-          <lucide-icon name="target"></lucide-icon>
-          Forecasting
+          <span class="tab-icon-badge">
+            <lucide-icon name="target"></lucide-icon>
+          </span>
+          FORECASTING
         </button>
         <button
           class="tab-btn"
